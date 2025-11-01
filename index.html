@@ -7,7 +7,7 @@
     <style>
         body {
             font-family: 'Arial', sans-serif;
-            /* خلفية الصورة التي تم توفيرها */
+            /* تمت إضافة الصورة كخلفية مرة أخرى */
             background-image: url('https://media.discordapp.net/attachments/1426684445506797770/1426708115209982033/284A6BCF-A604-4D2A-96F6-628615AFFD92.jpg?ex=68fcafb9&is=68fb5e39&hm=3f6ba29071ca22d7cc87ac2daf7d939739485bae4b96e90aa9d558420783c4e2&=&format=webp&width=1165&height=655');
             background-size: cover; 
             background-position: center;
@@ -22,10 +22,11 @@
         }
 
         .container {
-            background-color: rgba(255, 255, 255, 0.95);
+            /* تم تعديل الشفافية لتناسب الخلفية الداكنة */
+            background-color: rgba(255, 255, 255, 0.9); /* خلفية بيضاء شبه شفافة */
             padding: 30px;
             border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3); 
             width: 100%;
             max-width: 480px;
         }
@@ -108,13 +109,13 @@
         .copy-button:hover {
             background-color: #0056b3;
         }
-        /* رسالة التأكيد */
+
         #copyMessage {
             text-align: center;
             margin-top: 10px;
             color: #28a745;
             font-weight: bold;
-            display: none; /* إخفاؤها افتراضياً */
+            display: none; 
         }
     </style>
 </head>
@@ -228,36 +229,27 @@
         let outputText = '';
 
         if (specialLetter) {
-            // التنسيق في حال تفعيل الحروف الخاصة: [الحرف الأساسي] | [الحرف الإضافي]-000 | [المكان]
             outputText = `${prefix} | ${specialLetter}-${number} | ${location}`;
         } else if (prefix === 'E') {
-            // التنسيق الطبيعي لحرف E: E-000 | المكان
             outputText = `${prefix}-${number} | ${location}`;
         } else {
-            // التنسيق الطبيعي للحروف الأخرى: CC | E-000 | المكان
             outputText = `${prefix} | E-${number} | ${location}`;
         }
         
         fieldOutput.textContent = outputText;
     }
     
-    // دالة النسخ الجديدة
     function copyFieldOutput() {
-        // نأخذ النص من مربع الناتج
         const textToCopy = fieldOutput.textContent;
 
-        // التحقق من أن النص لا يزال رسالة خطأ أو الحالة الافتراضية
         if (textToCopy === 'يرجى اختيار المكان' || textToCopy === 'يرجى إدخال البيانات') {
             alert('يرجى إدخال واختيار البيانات المطلوبة أولاً.');
             return;
         }
 
-        // استخدام واجهة برمجة التطبيقات الحديثة (Clipboard API) للنسخ
         navigator.clipboard.writeText(textToCopy).then(() => {
-            // إظهار رسالة التأكيد
             copyMessage.style.display = 'block';
             
-            // إخفاء رسالة التأكيد بعد 2 ثانية
             setTimeout(() => {
                 copyMessage.style.display = 'none';
             }, 2000);
@@ -268,14 +260,12 @@
         });
     }
 
-    // ربط الدوال بالتغييرات
     fieldNumberInput.addEventListener('input', updateFieldOutput);
     locationSelect.addEventListener('change', updateFieldOutput);
     prefixSelect.addEventListener('change', updateFieldOutput);
     enableSpecialPrefix.addEventListener('change', toggleSpecialPrefix);
     specialPrefixSelect.addEventListener('change', updateFieldOutput);
 
-    // استدعاء أولي لتعيين الحالة الافتراضية
     updateFieldOutput();
 </script>
 
