@@ -22,12 +22,12 @@
         }
 
         .container {
-            background-color: rgba(255, 255, 255, 0.95); /* زيادة الشفافية */
+            background-color: rgba(255, 255, 255, 0.95);
             padding: 30px;
             border-radius: 8px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
             width: 100%;
-            max-width: 480px; /* زيادة العرض قليلاً */
+            max-width: 480px;
         }
 
         h2 {
@@ -59,7 +59,6 @@
             font-size: 16px;
         }
         
-        /* تنسيق خاص لحقل الصح */
         .checkbox-group {
             display: flex;
             align-items: center;
@@ -71,7 +70,6 @@
             font-weight: normal;
         }
         
-        /* إخفاء القائمة المنسدلة الجديدة افتراضياً */
         #specialPrefixGroup {
             display: none;
             margin-top: 10px;
@@ -92,7 +90,31 @@
             margin-top: 20px;
             min-height: 25px;
             white-space: pre-wrap;
-            direction: ltr; /* لضمان ظهور التنسيق الأجنبي بشكل صحيح */
+            direction: ltr; 
+        }
+
+        .copy-button {
+            width: 100%;
+            padding: 10px;
+            margin-top: 15px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        .copy-button:hover {
+            background-color: #0056b3;
+        }
+        /* رسالة التأكيد */
+        #copyMessage {
+            text-align: center;
+            margin-top: 10px;
+            color: #28a745;
+            font-weight: bold;
+            display: none; /* إخفاؤها افتراضياً */
         }
     </style>
 </head>
@@ -162,42 +184,43 @@
     <div id="fieldOutput" class="output-box">
         يرجى إدخال البيانات
     </div>
+    
+    <button class="copy-button" onclick="copyFieldOutput()">🖨️ نسخ الاسم الميداني</button>
+    
+    <p id="copyMessage">تم النسخ بنجاح!</p>
 
 </div>
 
 <script>
     const fieldNumberInput = document.getElementById('fieldNumber');
     const locationSelect = document.getElementById('locationSelect');
-    const prefixSelect = document.getElementById('prefixSelect'); // قائمة الحروف الأساسية (E, CC...)
-    const enableSpecialPrefix = document.getElementById('enableSpecialPrefix'); // صندوق الصح
-    const specialPrefixGroup = document.getElementById('specialPrefixGroup'); // div القائمة الجديدة
-    const specialPrefixSelect = document.getElementById('specialPrefixSelect'); // قائمة الحروف الجديدة (G, P...)
+    const prefixSelect = document.getElementById('prefixSelect'); 
+    const enableSpecialPrefix = document.getElementById('enableSpecialPrefix'); 
+    const specialPrefixGroup = document.getElementById('specialPrefixGroup'); 
+    const specialPrefixSelect = document.getElementById('specialPrefixSelect');
     const fieldOutput = document.getElementById('fieldOutput');
+    const copyMessage = document.getElementById('copyMessage');
 
     function toggleSpecialPrefix() {
-        // إظهار أو إخفاء قائمة الحروف الخاصة بناءً على حالة صندوق الصح
         if (enableSpecialPrefix.checked) {
             specialPrefixGroup.style.display = 'block';
         } else {
             specialPrefixGroup.style.display = 'none';
         }
-        updateFieldOutput(); // تحديث الناتج بعد التفعيل/الإلغاء
+        updateFieldOutput();
     }
 
     function updateFieldOutput() {
-        // يتم استخدام padStart(3, '0') لضمان 3 أرقام مع أصفار بادئة
         const number = fieldNumberInput.value.padStart(3, '0');
         const location = locationSelect.value;
-        
-        let prefix = prefixSelect.value; // الحرف الأساسي (E, CC, CD...)
-        let specialLetter = ''; // الحرف الإضافي (G, P, H, R)
+        let prefix = prefixSelect.value;
+        let specialLetter = ''; 
         
         if (!location) {
              fieldOutput.textContent = 'يرجى اختيار المكان';
              return;
         }
 
-        // إذا كان صندوق الصح مفعلاً، نأخذ الحرف الإضافي من القائمة الجديدة
         if (enableSpecialPrefix.checked) {
             specialLetter = specialPrefixSelect.value;
         }
@@ -206,7 +229,6 @@
 
         if (specialLetter) {
             // التنسيق في حال تفعيل الحروف الخاصة: [الحرف الأساسي] | [الحرف الإضافي]-000 | [المكان]
-            // مثال يطابق طلبك: CC | R-000 | لام 1
             outputText = `${prefix} | ${specialLetter}-${number} | ${location}`;
         } else if (prefix === 'E') {
             // التنسيق الطبيعي لحرف E: E-000 | المكان
@@ -218,13 +240,38 @@
         
         fieldOutput.textContent = outputText;
     }
+    
+    // دالة النسخ الجديدة
+    function copyFieldOutput() {
+        // نأخذ النص من مربع الناتج
+        const textToCopy = fieldOutput.textContent;
 
-    // ربط الدالة بجميع تغييرات الإدخال والاختيار
+        // التحقق من أن النص لا يزال رسالة خطأ أو الحالة الافتراضية
+        if (textToCopy === 'يرجى اختيار المكان' || textToCopy === 'يرجى إدخال البيانات') {
+            alert('يرجى إدخال واختيار البيانات المطلوبة أولاً.');
+            return;
+        }
+
+        // استخدام واجهة برمجة التطبيقات الحديثة (Clipboard API) للنسخ
+        navigator.clipboard.writeText(textToCopy).then(() => {
+            // إظهار رسالة التأكيد
+            copyMessage.style.display = 'block';
+            
+            // إخفاء رسالة التأكيد بعد 2 ثانية
+            setTimeout(() => {
+                copyMessage.style.display = 'none';
+            }, 2000);
+            
+        }).catch(err => {
+            console.error('فشل في عملية النسخ:', err);
+            alert('فشل النسخ. يرجى المحاولة يدوياً. (قد تحتاج إلى استخدام متصفح أحدث).');
+        });
+    }
+
+    // ربط الدوال بالتغييرات
     fieldNumberInput.addEventListener('input', updateFieldOutput);
     locationSelect.addEventListener('change', updateFieldOutput);
     prefixSelect.addEventListener('change', updateFieldOutput);
-    
-    // ربط الدالة بصندوق الصح والقائمة الجديدة
     enableSpecialPrefix.addEventListener('change', toggleSpecialPrefix);
     specialPrefixSelect.addEventListener('change', updateFieldOutput);
 
