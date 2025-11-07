@@ -280,7 +280,7 @@ function generateInternalLeave(){
   const tzNow = new Date(new Date().toLocaleString("en-US",{timeZone:"Asia/Riyadh"}));
   
   // ابدأ بعد 5 دقائق من الضغط على إنشاء القرار
-  // التصحيح: 5 دقائق * 60 ثانية * 1000 مللي ثانية
+  // 5 دقائق * 60 ثانية * 1000 مللي ثانية
   const startDate = new Date(tzNow.getTime() + 5 * 60 * 1000); 
   
   // نهاية الإجازة بحسب الساعات
@@ -332,7 +332,7 @@ function copyInternalLeave(){
   alert("✅ تم نسخ القرار بنجاح!");
 }
 
-// ---------- الاستقالة ----------
+// ---------- الاستقالة (تم تعديل رسالة السحب هنا) ----------
 function getResignationTemplatesByLevel(level){
   if(level === 'متدرب'){ return [{ key: 'سفلة', label: 'صيغة الاستقالة للمتدرب' }]; }
   if(level === 'مستوى 1'){ return [{ key: 'رفض', label: 'صيغة الاستقالة لمستوى 1' }]; }
@@ -372,15 +372,16 @@ function generateResignation(){
     let fine=level==='متدرب'?'1,000,000':'500,000';
     let reason=level==='متدرب'?'استقالة بمستوى متدرب':'استقالة بمستوى 1';
 
-    // *** منطق توليد رسالة السحب الجديدة (تم إزالة النقطة) ***
+    // *** منطق توليد رسالة السحب الجديدة (تم إزالة "مستوى" للمتدرب) ***
     let amount = level === 'متدرب' ? '1,000,000' : '500,000';
-    let type   = level === 'متدرب' ? 'استقاله مستوى متدرب' : 'استقاله مستوى 1';
+    // تم تعديل هذا السطر ليصبح: 'استقاله متدرب'
+    let type   = level === 'متدرب' ? 'استقاله متدرب' : 'استقاله مستوى 1';
 
     pullMessage = `${copyId}
 
 ${amount}
 
-   عملية سحب ناجحه  ( ${type} )`; // تم حذف النقطة
+   عملية سحب ناجحه  ( ${type} )`; 
     
     // عرض رسالة السحب وحقلها وزر النسخ
     pullOutputBox.textContent = pullMessage;
